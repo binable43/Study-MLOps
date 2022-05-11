@@ -119,29 +119,99 @@ class RNN:
   - i.e., Long-term dependencies
   - e.g., remember the name of a character from the first sentence
 
+### Vanilla RNNs : The reality
+- Can't handle more than 10-20 timesteps
+- Longer-term dependencies get lost
+- WHY? **Vanishing Gradients**
+  - sigmoid, tanh ; input 커질수록 derivative 값이 0에 수렴 -> 기울기 소실이 발생
+  - ReLU : exploding gradients (gradients tend to get too big)
+
+
+### LSTMs
+```python
+class LSTM(RNN):
+  # ...
+  def compute_next_h(self, x):
+    h = lstm(x, self.h)
+    # or gru(x, self.h), etc.
+    return h
+  # ...
+```
+
+
 
 <br>
 <br>
 
 ## Case study : Machine Translation
+### Key Questions for applications
+- What problem are they trying to solve?
+- What model architecture was used?
+- What loss function was used?
+- What dataset was it trained on?
+- How did they do training?
+- What tricks were needed for inference in depolyment?
+
+<br>
+
+### Google's Neural Machine Translation System (GNMT)
+- Google’s Neural Machine Translation System: Bridging the Gap between Human and Machine Translation (Wu et al., 2016)
+- Summary of GNMT approach
+  - Stacked LSTM encoder-decoder architecture with residual connections
+  - Attention enables longer-term connections
+  - To encode future information in the source sentence use a bidirectional LSTM
+  - Train using standard cross-entropy on a large dataset
+  - Speed up inference with quantization of weights
+
 
 <br>
 <br>
 
 ## CTC loss
 
+- The Goal
+- The Idea
+- CTC Loss
+
 <br>
 <br>
 
 ## Pros and Cons
+### Pros
+- Encoder/Decoder LSTM architectures can model arbitray (one-to-many, many-to-one, many-to-many) sequence problems
+- Many successes in NLP and other applications
+
+<br>
+
+### Cons
+- Recurrent network training is not as parallelizable as FC or CNN, due to the need to go in sequence
+- Therefore much slower!
+- Also can be finicky to train
+
 
 <br>
 <br>
 
 ## A preview of non-recurrent sequence models
+- Convolutional approach to sequence data modeling
+- Next lecture, all-fully-connected Transformer models
+
+### WaveNet
+- Inference
+  - Primary drawback of WaveNet: although training is parallel, inference is serial
+  - Followup paper introduced fast, parallel synthesis version of WaveNet: Parallel WaveNet
+
+- Summary of WaveNet approach
+  - Another way of dealing with long-term dependencies is to do away with recurrent networks altogether
+  - Instead, you can use a form of 1d convolutions called causal convolutions
+  - To increase the receptive field of causal convolutions, can used dilated causal convolutions
+  - In addition to long-term dependencies, main advantage of WaveNet is fast parallel training
+  - Tradeoff is slow inference time, which can be mitigated through the parallel WaveNet approach
+
 
 <br>
 <br>
 
 ## Reference
 - [Full Stack Deep Learning - Spring 2021](https://fullstackdeeplearning.com/spring2021/)
+- [Understanding LSTM Networks](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
